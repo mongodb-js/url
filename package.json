@@ -1,0 +1,25 @@
+{
+  "name": "mongodb-url",
+  "version": "0.0.0",
+  "description": "Extend mongodb-uri for more flexibility and data packing.",
+  "author": "Lucas Hrabovsky <hrabovsky.lucas@gmail.com> (http://imlucas.com)",
+  "license": "MIT",
+  "homepage": "http://github.com/imlucas/mongodb-url",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/imlucas/mongodb-url.git"
+  },
+  "keywords": [
+    "mongodb.js",
+    "mongodb"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "~2.1.0"
+  },
+  "dependencies": {
+    "mongodb-uri": "~0.9.7"
+  }
+}
