@@ -1,6 +1,6 @@
 {
   "name": "mongodb-url",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Extend mongodb-uri for more flexibility and data packing.",
   "author": "Lucas Hrabovsky <hrabovsky.lucas@gmail.com> (http://imlucas.com)",
   "license": "MIT",
