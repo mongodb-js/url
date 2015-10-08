@@ -1,15 +1,15 @@
-# mongodb-url
+# mongodb-url [![][travis_img]][travis_url] [![][npm_img]][npm_url]
 
-[![build status](https://secure.travis-ci.org/imlucas/mongodb-url.png)](http://travis-ci.org/imlucas/mongodb-url)
-
-Extend mongodb-uri for more flexibility and data packing.
+> How MongoDB URL's work.
 
 ## Example
 
 ```javascript
-var toMongodb = require('mongodb-url');
-console.log(getURL('localhost:27017').type('standalone').toString());
-// 'mongodb://localhost:27017?type=standalone');
+var parse = require('mongodb-url');
+parse('localhost:27017')
+>>> { dbName: 'admin', servers: [ { host: 'localhost', port: 27017 } ] }
+parse('mongodb://localhost:27017')
+>>> { dbName: 'admin', servers: [ { host: 'localhost', port: 27017 } ] }
 ```
 
 ## Install
@@ -26,4 +26,9 @@ npm test
 
 ## License
 
-MIT
+Apache 2
+
+[travis_img]: https://img.shields.io/travis/mongodb-js/url.svg?style=flat-square
+[travis_url]: https://travis-ci.org/mongodb-js/url
+[npm_img]: https://img.shields.io/npm/v/mongodb-url.svg?style=flat-square
+[npm_url]: https://www.npmjs.org/package/mongodb-url
