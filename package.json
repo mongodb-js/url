@@ -14,7 +14,7 @@
     "url": "git://github.com/mongodb-js/url.git"
   },
   "dependencies": {
-    "mongodb-read-preference": "^1.0.0"
+    "mongodb-read-preference": "^1.0.4"
   },
   "devDependencies": {
     "eslint-config-mongodb-js": "^1.0.4",
