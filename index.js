@@ -1,4 +1,3 @@
-/* eslint indent:0 */
 var ReadPreference = require('mongodb-read-preference');
 var IPV6 = /\[([^\]]+)\](?:\:(.+))?'/;
 
@@ -6,9 +5,9 @@ function parse(url, options) {
   // Ensure we have a default options object if none set
   options = options || {};
   // Variables
-  var connection_part = '';
-  var auth_part = '';
-  var query_string_part = '';
+  var connectionPart = '';
+  var authPart = '';
+  var queryStringPart = '';
   var dbName = 'admin';
 
   if (url.indexOf('mongodb://') === -1) {
@@ -16,36 +15,36 @@ function parse(url, options) {
   }
   // @todo (imlucas): Switch to using `require('url').parse()`.
   // If we have a ? mark cut the query elements off
-  if (url.indexOf('?') != -1) {
-    query_string_part = url.substr(url.indexOf('?') + 1);
-    connection_part = url.substring('mongodb://'.length, url.indexOf('?'));
+  if (url.indexOf('?') !== -1) {
+    queryStringPart = url.substr(url.indexOf('?') + 1);
+    connectionPart = url.substring('mongodb://'.length, url.indexOf('?'));
   } else {
-    connection_part = url.substring('mongodb://'.length);
+    connectionPart = url.substring('mongodb://'.length);
   }
 
   // Check if we have auth params
-  if (connection_part.indexOf('@') != -1) {
-    auth_part = connection_part.split('@')[0];
-    connection_part = connection_part.split('@')[1];
+  if (connectionPart.indexOf('@') !== -1) {
+    authPart = connectionPart.split('@')[0];
+    connectionPart = connectionPart.split('@')[1];
   }
 
   // Check if the connection string has a db
-  if (connection_part.indexOf('.sock') != -1) {
-    if (connection_part.indexOf('.sock/') != -1) {
-      dbName = connection_part.split('.sock/')[1];
-      connection_part = connection_part.split('/',
-        connection_part.indexOf('.sock') + '.sock'.length);
+  if (connectionPart.indexOf('.sock') !== -1) {
+    if (connectionPart.indexOf('.sock/') !== -1) {
+      dbName = connectionPart.split('.sock/')[1];
+      connectionPart = connectionPart.split('/',
+        connectionPart.indexOf('.sock') + '.sock'.length);
     }
-  } else if (connection_part.indexOf('/') != -1) {
-    dbName = connection_part.split('/')[1];
-    connection_part = connection_part.split('/')[0];
+  } else if (connectionPart.indexOf('/') !== -1) {
+    dbName = connectionPart.split('/')[1];
+    connectionPart = connectionPart.split('/')[0];
   }
 
   // Result object
   var object = {};
 
   // Pick apart the authentication part of the string
-  var authPart = auth_part || '';
+  authPart = authPart || '';
   var auth = authPart.split(':', 2);
 
   // Decode the URI components
@@ -55,7 +54,7 @@ function parse(url, options) {
   }
 
   // Add auth to final object if we have 2 elements
-  if (auth.length == 2) {
+  if (auth.length === 2) {
     object.auth = {
       user: auth[0],
       password: auth[1]
@@ -88,7 +87,7 @@ function parse(url, options) {
       url.indexOf('mongodb://') + 'mongodb://'.length
       , url.lastIndexOf('.sock') + '.sock'.length);
     // Clean out any auth stuff if any
-    if (domainSocket.indexOf('@') != -1) {
+    if (domainSocket.indexOf('@') !== -1) {
       domainSocket = domainSocket.split('@')[1];
     }
     servers = [{
@@ -96,7 +95,7 @@ function parse(url, options) {
     }];
   } else {
     // Split up the db
-    hostPart = connection_part;
+    hostPart = connectionPart;
     // Deduplicate servers
     var deduplicatedServers = {};
 
@@ -113,9 +112,9 @@ function parse(url, options) {
         // otherwise assume it's IPv4, or plain hostname
         var hostPort = h.split(':', 2);
         _host = hostPort[0] || 'localhost';
-        _port = hostPort[1] != null ? parseInt(hostPort[1], 10) : 27017;
+        _port = hostPort[1] !== null ? parseInt(hostPort[1], 10) : 27017;
         // Check for localhost?safe=true style case
-        if (_host.indexOf('?') != -1) {
+        if (_host.indexOf('?') !== -1) {
           _host = _host.split(/\?/)[0];
         }
       }
@@ -132,16 +131,20 @@ function parse(url, options) {
         port: _port
       };
     }).filter(function(x) {
-      return x != null;
+      return x !== null;
     });
   }
 
   // Get the db name
   object.dbName = dbName || 'admin';
   // Split up all the options
-  urlOptions = (query_string_part || '').split(/[&;]/);
+  urlOptions = (queryStringPart || '').split(/[&;]/);
   // Ugh, we have to figure out which options go to which constructor manually.
   urlOptions.forEach(function(opt) {
+    /* eslint complexity:0, indent:0 */
+    /**
+     * @todo (imlucas): Cleanup.
+     */
     if (!opt) {
       return;
     }
@@ -152,8 +155,8 @@ function parse(url, options) {
     switch (name) {
       case 'slaveOk':
       case 'slave_ok':
-        serverOptions.slave_ok = value == 'true';
-        dbOptions.slaveOk = value == 'true';
+        serverOptions.slave_ok = value === 'true';
+        dbOptions.slaveOk = value === 'true';
         break;
       case 'maxPoolSize':
       case 'poolSize':
@@ -162,7 +165,7 @@ function parse(url, options) {
         break;
       case 'autoReconnect':
       case 'auto_reconnect':
-        serverOptions.auto_reconnect = value == 'true';
+        serverOptions.auto_reconnect = value === 'true';
         break;
       case 'minPoolSize':
         throw new TypeError('minPoolSize not supported');
@@ -175,13 +178,13 @@ function parse(url, options) {
       case 'uuidRepresentation':
         throw new TypeError('uuidRepresentation not supported');
       case 'ssl':
-        if (value == 'prefer') {
+        if (value === 'prefer') {
           serverOptions.ssl = value;
           replSetServersOptions.ssl = value;
           break;
         }
-        serverOptions.ssl = value == 'true';
-        replSetServersOptions.ssl = value == 'true';
+        serverOptions.ssl = value === 'true';
+        replSetServersOptions.ssl = value === 'true';
         break;
       case 'replicaSet':
       case 'rs_name':
@@ -195,20 +198,20 @@ function parse(url, options) {
         break;
       case 'readSecondary':
       case 'read_secondary':
-        replSetServersOptions.read_secondary = value == 'true';
+        replSetServersOptions.read_secondary = value === 'true';
         break;
       case 'fsync':
-        dbOptions.fsync = value == 'true';
+        dbOptions.fsync = value === 'true';
         break;
       case 'journal':
-        dbOptions.j = value == 'true';
+        dbOptions.j = value === 'true';
         break;
       case 'safe':
-        dbOptions.safe = value == 'true';
+        dbOptions.safe = value === 'true';
         break;
       case 'nativeParser':
       case 'native_parser':
-        dbOptions.native_parser = value == 'true';
+        dbOptions.native_parser = value === 'true';
         break;
       case 'readConcernLevel':
         dbOptions.readConcern = {
@@ -236,11 +239,11 @@ function parse(url, options) {
         dbOptions.gssapiServiceName = value;
         break;
       case 'authMechanism':
-        if (value == 'GSSAPI') {
+        if (value === 'GSSAPI') {
           // If no password provided decode only the principal
-          if (object.auth == null) {
+          if (!object.auth) {
             var urlDecodeAuthPart = decodeURIComponent(authPart);
-            if (urlDecodeAuthPart.indexOf('@') == -1) {
+            if (urlDecodeAuthPart.indexOf('@') === -1) {
               throw new TypeError('GSSAPI requires a provided principal');
             }
             object.auth = {
@@ -250,19 +253,19 @@ function parse(url, options) {
           } else {
             object.auth.user = decodeURIComponent(object.auth.user);
           }
-        } else if (value == 'MONGODB-X509') {
+        } else if (value === 'MONGODB-X509') {
           object.auth = {
             user: decodeURIComponent(authPart)
           };
         }
 
         // Only support GSSAPI or MONGODB-CR for now
-        if (value != 'GSSAPI'
-          && value != 'MONGODB-X509'
-          && value != 'MONGODB-CR'
-          && value != 'DEFAULT'
-          && value != 'SCRAM-SHA-1'
-          && value != 'PLAIN') {
+        if (value !== 'GSSAPI'
+          && value !== 'MONGODB-X509'
+          && value !== 'MONGODB-CR'
+          && value !== 'DEFAULT'
+          && value !== 'SCRAM-SHA-1'
+          && value !== 'PLAIN') {
           throw new TypeError('only DEFAULT, GSSAPI, PLAIN, '
             + 'MONGODB-X509, SCRAM-SHA-1 or MONGODB-CR is supported by authMechanism');
         }
@@ -284,7 +287,7 @@ function parse(url, options) {
         // Set all authMechanismProperties
         dbOptions.authMechanismProperties = o;
         // Set the service name value
-        if (typeof o.SERVICE_NAME == 'string') {
+        if (typeof o.SERVICE_NAME === 'string') {
           dbOptions.gssapiServiceName = o.SERVICE_NAME;
         }
         break;
@@ -303,7 +306,7 @@ function parse(url, options) {
         value = decodeURIComponent(value);
         // Contains the tag object
         var tagObject = {};
-        if (value == null || value == '') {
+        if (value === null || value === '') {
           dbOptions.read_preference_tags.push(tagObject);
           break;
         }
@@ -329,10 +332,10 @@ function parse(url, options) {
   }
 
   // Validate if there are an invalid write concern combinations
-  if ((dbOptions.w == -1 || dbOptions.w == 0) && (
-    dbOptions.journal == true
-    || dbOptions.fsync == true
-    || dbOptions.safe == true)) {
+  if ((dbOptions.w === -1 || dbOptions.w === 0) && (
+    dbOptions.journal === true
+    || dbOptions.fsync === true
+    || dbOptions.safe === true)) {
     throw new TypeError('w set to -1 or 0 cannot be combined with safe/w/journal/fsync');
   }
 
