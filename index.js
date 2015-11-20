@@ -112,7 +112,7 @@ function parse(url, options) {
         // otherwise assume it's IPv4, or plain hostname
         var hostPort = h.split(':', 2);
         _host = hostPort[0] || 'localhost';
-        _port = hostPort[1] !== null ? parseInt(hostPort[1], 10) : 27017;
+        _port = hostPort[1] ? parseInt(hostPort[1], 10) : 27017;
         // Check for localhost?safe=true style case
         if (_host.indexOf('?') !== -1) {
           _host = _host.split(/\?/)[0];
