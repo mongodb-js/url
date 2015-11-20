@@ -1,7 +1,7 @@
 {
   "name": "mongodb-url",
   "description": "MongoDB URL parsing.",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "scripts": {
     "fmt": "mongodb-js-fmt",
     "check": "mongodb-js-precommit",
