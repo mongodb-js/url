@@ -355,6 +355,19 @@ module.exports = parse;
 module.exports.port = function(_id) {
   return parse(_id).servers[0].port;
 };
+
 module.exports.hostname = function(_id) {
   return parse(_id).servers[0].host;
+};
+
+/**
+ * TODO (imlucas) Unify this value w/ the driver so we dont diverge.
+ */
+var DEFAULT = 'mongodb://localhost:27017/test';
+module.exports.DEFAULT = DEFAULT;
+
+module.exports.get = function(_default) {
+  _default = _default || DEFAULT;
+  return process.env.MONGODB_URL || process.env.MONGOLAB_URI
+    || process.env.MONGOHQ_URL || DEFAULT;
 };
