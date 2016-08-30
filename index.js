@@ -3,7 +3,9 @@ var IPV6 = /\[([^\]]+)\](?:\:(.+))?'/;
 
 function parse(url, options) {
   // Ensure we have a default options object if none set
-  options = options || {};
+  if (!options) {
+    options = {};
+  }
   // Variables
   var connectionPart = '';
   var authPart = '';
@@ -367,7 +369,9 @@ var DEFAULT = 'mongodb://localhost:27017/test';
 module.exports.DEFAULT = DEFAULT;
 
 module.exports.get = function(_default) {
-  _default = _default || DEFAULT;
+  if (!_default) {
+    _default = DEFAULT;
+  }
   return process.env.MONGODB_URL || process.env.MONGOLAB_URI
     || process.env.MONGOHQ_URL || DEFAULT;
 };
