@@ -26,4 +26,8 @@ describe('mongodb-url', function() {
     assert.equal(res.dbName, 'firstdb');
     assert.equal(res.db_options.authSource, 'test');
   });
+  it('gets the read preference', function() {
+    var res = parse('mongodb://localhost/firstdb?readPreference=primary');
+    assert.equal(res.db_options.read_preference, 'primary');
+  });
 });
