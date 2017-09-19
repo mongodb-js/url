@@ -1,4 +1,4 @@
-var ReadPreference = require('mongodb').ReadPreference;
+var ReadPreference = require('mongodb/lib/read_preference');
 var IPV6 = /\[([^\]]+)\](?:\:(.+))?'/;
 
 function parse(url, options) {
