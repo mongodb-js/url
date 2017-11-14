@@ -1,5 +1,7 @@
 var ReadPreference = require('mongodb/lib/read_preference');
 var IPV6 = /\[([^\]]+)\](?:\:(.+))?'/;
+var MONGO = 'mongodb://';
+var MONGO_SRV = 'mongodb+srv://';
 
 function parse(url, options) {
   // Ensure we have a default options object if none set
@@ -11,17 +13,23 @@ function parse(url, options) {
   var authPart = '';
   var queryStringPart = '';
   var dbName = 'admin';
+  var protocol = 'mongodb://';
 
-  if (url.indexOf('mongodb://') === -1) {
-    url = 'mongodb://' + url;
+  if (url.indexOf(MONGO) === -1 && url.indexOf(MONGO_SRV) === -1) {
+    url = MONGO + url;
   }
+
+  if (url.indexOf(MONGO_SRV) > -1) {
+    protocol = MONGO_SRV;
+  }
+
   // @todo (imlucas): Switch to using `require('url').parse()`.
   // If we have a ? mark cut the query elements off
   if (url.indexOf('?') !== -1) {
     queryStringPart = url.substr(url.indexOf('?') + 1);
-    connectionPart = url.substring('mongodb://'.length, url.indexOf('?'));
+    connectionPart = url.substring(protocol.length, url.indexOf('?'));
   } else {
-    connectionPart = url.substring('mongodb://'.length);
+    connectionPart = url.substring(protocol.length);
   }
 
   // Check if we have auth params
@@ -86,7 +94,7 @@ function parse(url, options) {
   if (url.match(/\.sock/)) {
     // Split out the socket part
     var domainSocket = url.substring(
-      url.indexOf('mongodb://') + 'mongodb://'.length
+      url.indexOf(protocol) + protocol.length
       , url.lastIndexOf('.sock') + '.sock'.length);
     // Clean out any auth stuff if any
     if (domainSocket.indexOf('@') !== -1) {
@@ -348,6 +356,8 @@ function parse(url, options) {
 
   // Add servers to result
   object.servers = servers;
+
+  object.isSrvRecord = (protocol === MONGO_SRV);
   // Returned parsed object
   return object;
 }

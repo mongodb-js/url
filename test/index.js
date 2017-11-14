@@ -12,6 +12,10 @@ describe('mongodb-url', function() {
     });
   });
 
+  it('defaults srv to false', function() {
+    assert.equal(parse('localhost:27017').isSrvRecord, false);
+  });
+
   it('should get the port', function() {
     assert.equal(parse.port('localhost:27017'), 27017);
   });
@@ -29,5 +33,13 @@ describe('mongodb-url', function() {
   it('gets the read preference', function() {
     var res = parse('mongodb://localhost/firstdb?readPreference=primary');
     assert.equal(res.db_options.read_preference, 'primary');
+  });
+
+  context('when the protocol is mongodb+srv', function() {
+    var res = parse('mongodb+srv://localhost/firstdb');
+
+    it('sets is srv record to true', function() {
+      assert.equal(res.isSrvRecord, true);
+    });
   });
 });
