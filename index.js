@@ -1,4 +1,4 @@
-var ReadPreference = require('mongodb/lib/read_preference');
+var ReadPreference = require('mongodb-core').ReadPreference;
 var IPV6 = /\[([^\]]+)\](?:\:(.+))?'/;
 var MONGO = 'mongodb://';
 var MONGO_SRV = 'mongodb+srv://';
