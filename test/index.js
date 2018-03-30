@@ -35,6 +35,11 @@ describe('mongodb-url', function() {
     assert.equal(res.db_options.read_preference, 'primary');
   });
 
+  it('should trim hidden chars at the end of the line', function() {
+    var res = parse('mongodb://localhost/firstdb?authMechanism=PLAIN\n');
+    assert.equal(res.db_options.authMechanism, 'PLAIN');
+  });
+
   context('when the protocol is mongodb+srv', function() {
     var res = parse('mongodb+srv://localhost/firstdb');
 

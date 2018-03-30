@@ -249,7 +249,8 @@ function parse(url, options) {
         dbOptions.gssapiServiceName = value;
         break;
       case 'authMechanism':
-        if (value === 'GSSAPI') {
+        var rawValue = value.trim();
+        if (rawValue === 'GSSAPI') {
           // If no password provided decode only the principal
           if (!object.auth) {
             var urlDecodeAuthPart = decodeURIComponent(authPart);
@@ -263,26 +264,26 @@ function parse(url, options) {
           } else {
             object.auth.user = decodeURIComponent(object.auth.user);
           }
-        } else if (value === 'MONGODB-X509') {
+        } else if (rawValue === 'MONGODB-X509') {
           object.auth = {
             user: decodeURIComponent(authPart)
           };
         }
 
         // Only support GSSAPI or MONGODB-CR for now
-        if (value !== 'GSSAPI'
-          && value !== 'MONGODB-X509'
-          && value !== 'MONGODB-CR'
-          && value !== 'DEFAULT'
-          && value !== 'SCRAM-SHA-1'
-          && value !== 'PLAIN') {
+        if (rawValue !== 'GSSAPI'
+          && rawValue !== 'MONGODB-X509'
+          && rawValue !== 'MONGODB-CR'
+          && rawValue !== 'DEFAULT'
+          && rawValue !== 'SCRAM-SHA-1'
+          && rawValue !== 'PLAIN') {
           throw new TypeError('only DEFAULT, GSSAPI, PLAIN, '
             + 'MONGODB-X509, SCRAM-SHA-1 or MONGODB-CR is supported by authMechanism');
         }
 
 
         // Authentication mechanism
-        dbOptions.authMechanism = value;
+        dbOptions.authMechanism = rawValue;
         break;
       case 'authMechanismProperties':
         // Split up into key, value pairs
