@@ -276,9 +276,10 @@ function parse(url, options) {
           && rawValue !== 'MONGODB-CR'
           && rawValue !== 'DEFAULT'
           && rawValue !== 'SCRAM-SHA-1'
+          && rawValue !== 'SCRAM-SHA-256'
           && rawValue !== 'PLAIN') {
           throw new TypeError('only DEFAULT, GSSAPI, PLAIN, '
-            + 'MONGODB-X509, SCRAM-SHA-1 or MONGODB-CR is supported by authMechanism');
+            + 'MONGODB-X509, SCRAM-SHA-1, SCRAM-SHA-256 or MONGODB-CR is supported by authMechanism');
         }
 
 
