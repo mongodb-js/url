@@ -1,4 +1,4 @@
-var ReadPreference = require('mongodb-core').ReadPreference;
+var ReadPreference = require('mongodb').ReadPreference;
 var IPV6 = /\[([^\]]+)\](?:\:(.+))?'/;
 var MONGO = 'mongodb://';
 var MONGO_SRV = 'mongodb+srv://';
@@ -42,8 +42,10 @@ function parse(url, options) {
   if (connectionPart.indexOf('.sock') !== -1) {
     if (connectionPart.indexOf('.sock/') !== -1) {
       dbName = connectionPart.split('.sock/')[1];
-      connectionPart = connectionPart.split('/',
-        connectionPart.indexOf('.sock') + '.sock'.length);
+      connectionPart = connectionPart.split(
+        '/',
+        connectionPart.indexOf('.sock') + '.sock'.length
+      );
     }
   } else if (connectionPart.indexOf('/') !== -1) {
     dbName = connectionPart.split('/')[1];
@@ -94,15 +96,18 @@ function parse(url, options) {
   if (url.match(/\.sock/)) {
     // Split out the socket part
     var domainSocket = url.substring(
-      url.indexOf(protocol) + protocol.length
-      , url.lastIndexOf('.sock') + '.sock'.length);
+      url.indexOf(protocol) + protocol.length,
+      url.lastIndexOf('.sock') + '.sock'.length
+    );
     // Clean out any auth stuff if any
     if (domainSocket.indexOf('@') !== -1) {
       domainSocket = domainSocket.split('@')[1];
     }
-    servers = [{
-      domain_socket: domainSocket
-    }];
+    servers = [
+      {
+        domain_socket: domainSocket
+      }
+    ];
   } else {
     // Split up the db
     hostPart = connectionPart;
@@ -110,39 +115,42 @@ function parse(url, options) {
     var deduplicatedServers = {};
 
     // Parse all server results
-    servers = hostPart.split(',').map(function(h) {
-      var _host;
-      var _port;
-      var ipv6match = IPV6.exec(h);
-      // check if it matches [IPv6]:port, where the port number is optional
-      if (ipv6match) {
-        _host = ipv6match[1];
-        _port = parseInt(ipv6match[2], 10) || 27017;
-      } else {
-        // otherwise assume it's IPv4, or plain hostname
-        var hostPort = h.split(':', 2);
-        _host = hostPort[0] || 'localhost';
-        _port = hostPort[1] ? parseInt(hostPort[1], 10) : 27017;
-        // Check for localhost?safe=true style case
-        if (_host.indexOf('?') !== -1) {
-          _host = _host.split(/\?/)[0];
+    servers = hostPart
+      .split(',')
+      .map(function(h) {
+        var _host;
+        var _port;
+        var ipv6match = IPV6.exec(h);
+        // check if it matches [IPv6]:port, where the port number is optional
+        if (ipv6match) {
+          _host = ipv6match[1];
+          _port = parseInt(ipv6match[2], 10) || 27017;
+        } else {
+          // otherwise assume it's IPv4, or plain hostname
+          var hostPort = h.split(':', 2);
+          _host = hostPort[0] || 'localhost';
+          _port = hostPort[1] ? parseInt(hostPort[1], 10) : 27017;
+          // Check for localhost?safe=true style case
+          if (_host.indexOf('?') !== -1) {
+            _host = _host.split(/\?/)[0];
+          }
         }
-      }
 
-      // No entry returned for duplicate servr
-      if (deduplicatedServers[_host + '_' + _port]) {
-        return null;
-      }
-      deduplicatedServers[_host + '_' + _port] = 1;
+        // No entry returned for duplicate servr
+        if (deduplicatedServers[_host + '_' + _port]) {
+          return null;
+        }
+        deduplicatedServers[_host + '_' + _port] = 1;
 
-      // Return the mapped object
-      return {
-        host: _host,
-        port: _port
-      };
-    }).filter(function(x) {
-      return x !== null;
-    });
+        // Return the mapped object
+        return {
+          host: _host,
+          port: _port
+        };
+      })
+      .filter(function(x) {
+        return x !== null;
+      });
   }
 
   // Get the db name
@@ -230,11 +238,17 @@ function parse(url, options) {
         break;
       case 'connectTimeoutMS':
         serverOptions.socketOptions.connectTimeoutMS = parseInt(value, 10);
-        replSetServersOptions.socketOptions.connectTimeoutMS = parseInt(value, 10);
+        replSetServersOptions.socketOptions.connectTimeoutMS = parseInt(
+          value,
+          10
+        );
         break;
       case 'socketTimeoutMS':
         serverOptions.socketOptions.socketTimeoutMS = parseInt(value, 10);
-        replSetServersOptions.socketOptions.socketTimeoutMS = parseInt(value, 10);
+        replSetServersOptions.socketOptions.socketTimeoutMS = parseInt(
+          value,
+          10
+        );
         break;
       case 'w':
         dbOptions.w = parseInt(value, 10);
@@ -271,17 +285,20 @@ function parse(url, options) {
         }
 
         // Only support GSSAPI or MONGODB-CR for now
-        if (rawValue !== 'GSSAPI'
-          && rawValue !== 'MONGODB-X509'
-          && rawValue !== 'MONGODB-CR'
-          && rawValue !== 'DEFAULT'
-          && rawValue !== 'SCRAM-SHA-1'
-          && rawValue !== 'SCRAM-SHA-256'
-          && rawValue !== 'PLAIN') {
-          throw new TypeError('only DEFAULT, GSSAPI, PLAIN, '
-            + 'MONGODB-X509, SCRAM-SHA-1, SCRAM-SHA-256 or MONGODB-CR is supported by authMechanism');
+        if (
+          rawValue !== 'GSSAPI' &&
+          rawValue !== 'MONGODB-X509' &&
+          rawValue !== 'MONGODB-CR' &&
+          rawValue !== 'DEFAULT' &&
+          rawValue !== 'SCRAM-SHA-1' &&
+          rawValue !== 'SCRAM-SHA-256' &&
+          rawValue !== 'PLAIN'
+        ) {
+          throw new TypeError(
+            'only DEFAULT, GSSAPI, PLAIN, ' +
+              'MONGODB-X509, SCRAM-SHA-1, SCRAM-SHA-256 or MONGODB-CR is supported by authMechanism'
+          );
         }
-
 
         // Authentication mechanism
         dbOptions.authMechanism = rawValue;
@@ -308,8 +325,10 @@ function parse(url, options) {
         break;
       case 'readPreference':
         if (!ReadPreference.isValid(value)) {
-          throw new TypeError('readPreference must be one of '
-            + Object.keys(ReadPreference).join('|'));
+          throw new TypeError(
+            'readPreference must be one of ' +
+              Object.keys(ReadPreference).join('|')
+          );
         }
         dbOptions.read_preference = value;
         break;
@@ -344,11 +363,15 @@ function parse(url, options) {
   }
 
   // Validate if there are an invalid write concern combinations
-  if ((dbOptions.w === -1 || dbOptions.w === 0) && (
-    dbOptions.journal === true
-    || dbOptions.fsync === true
-    || dbOptions.safe === true)) {
-    throw new TypeError('w set to -1 or 0 cannot be combined with safe/w/journal/fsync');
+  if (
+    (dbOptions.w === -1 || dbOptions.w === 0) &&
+    (dbOptions.journal === true ||
+      dbOptions.fsync === true ||
+      dbOptions.safe === true)
+  ) {
+    throw new TypeError(
+      'w set to -1 or 0 cannot be combined with safe/w/journal/fsync'
+    );
   }
 
   // If no read preference set it to primary
@@ -359,7 +382,7 @@ function parse(url, options) {
   // Add servers to result
   object.servers = servers;
 
-  object.isSrvRecord = (protocol === MONGO_SRV);
+  object.isSrvRecord = protocol === MONGO_SRV;
   // Returned parsed object
   return object;
 }
@@ -384,6 +407,10 @@ module.exports.get = function(_default) {
   if (!_default) {
     _default = DEFAULT;
   }
-  return process.env.MONGODB_URL || process.env.MONGOLAB_URI
-    || process.env.MONGOHQ_URL || DEFAULT;
+  return (
+    process.env.MONGODB_URL ||
+    process.env.MONGOLAB_URI ||
+    process.env.MONGOHQ_URL ||
+    DEFAULT
+  );
 };
